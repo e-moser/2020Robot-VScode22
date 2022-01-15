@@ -18,7 +18,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 //import com.ctre.phoenix.motorcontrol.can.*;
 
-//import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -28,10 +28,9 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
+import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
@@ -70,7 +69,7 @@ public class Robot extends TimedRobot
   private final Transport transport = new Transport(joystick1, joystick2);
 
   // hangerSolenoid prior numbers (0, 1)
-  private final DoubleSolenoid armSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 6);
+  private final DoubleSolenoid armSolenoid = new DoubleSolenoid(4, 6);
   //private DoubleSolenoid hangerSolenoid = new DoubleSolenoid(5, 7);
   //time_buddhist_cronology
   // limelight
@@ -159,7 +158,7 @@ public class Robot extends TimedRobot
     //ControlLimelight();
     CalculateDistance();
 
-    lastLaunchPress = joystick1.getRightTriggerAxis();
+    lastLaunchPress = joystick1.getTriggerAxis(Hand.kRight);
   }
 
   private void CheckArm() {
@@ -205,9 +204,9 @@ public class Robot extends TimedRobot
         yeetMode = !yeetMode;
       }
       if (yeetMode) {
-        drive.arcadeDrive(-joystick1.getLeftY() * 1.0f, joystick1.getLeftX() * 1.0f, true);
+        drive.arcadeDrive(-joystick1.getY(Hand.kLeft) * 1.0f, joystick1.getX(Hand.kLeft) * 1.0f, true);
       } else {
-        drive.arcadeDrive(-joystick1.getLeftY() * 0.75f, joystick1.getLeftX() * 0.90f, true);
+        drive.arcadeDrive(-joystick1.getY(Hand.kLeft) * 0.75f, joystick1.getX(Hand.kLeft) * 0.90f, true);
       }
       left1.set(ControlMode.PercentOutput, left2.getMotorOutputPercent());
       right1.set(ControlMode.PercentOutput, right2.getMotorOutputPercent());
@@ -243,18 +242,18 @@ public class Robot extends TimedRobot
 
   
     // Create timer so arm does not activate until endgame
-    //if(joystick2.getRightTriggerAxis() > 0.5f)  }
+    //if(joystick2.getTriggerAxis(Hand.kRight) > 0.5f)  }
       //hangerSolenoid.set(Value.kForward); } else
-    //if(joystick2.getRightTriggerAxis() < 0.5f) {
+    //if(joystick2.getTriggerAxis(Hand.kRight) < 0.5f) {
       //hangerSolenoid.set(Value.kReverse); }
-    //if(joystick2.getLeftTriggerAxis() > 0.05f) } // winchMotor.set(-0.50f); }
+    //if(joystick2.getTriggerAxis(Hand.kLeft) > 0.05f) } // winchMotor.set(-0.50f); }
     }  
   private void CalculateDistance() {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
     distance = deltaHeight / (Math.tan(Math.toRadians(limelightAngle + angleOffsetY)));
   }
 
   public void PIDSearch() {
-    if (joystick1.getLeftTriggerAxis() > 0 && hasTarget == 1 && Math.abs(angleOffsetX) > 1) {
+    if (joystick1.getTriggerAxis(Hand.kLeft) > 0 && hasTarget == 1 && Math.abs(angleOffsetX) > 1) {
       double scale = 0.65f;
       if (Math.abs(angleOffsetX) < 8 && neutralZone < 10) {
         // improvement if angleOffsetX changes we are moving
@@ -276,11 +275,11 @@ public class Robot extends TimedRobot
       driverInputAccepted = true;
       neutralZone = 0;
     }
-    if(joystick1.getRightTriggerAxis() > 0.5f)
+    if(joystick1.getTriggerAxis(Hand.kRight) > 0.5f)
     {
       transport.StartLaunch(0.75f);
     }
-    else if (joystick1.getRightTriggerAxis() < 0.5f && lastLaunchPress >= 0.5f)
+    else if (joystick1.getTriggerAxis(Hand.kRight) < 0.5f && lastLaunchPress >= 0.5f)
     {
       transport.StopLaunch();
     }
@@ -289,7 +288,7 @@ public class Robot extends TimedRobot
 
   private void ArmControl()
   {
-    if(joystick1.getLeftStickButtonPressed())
+    if(joystick1.getStickButtonPressed(Hand.kLeft))
     {
       if (armSolenoid.get() == Value.kForward)
       {

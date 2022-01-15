@@ -3,7 +3,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
-//import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -99,7 +99,7 @@ public class Transport
             secondStageIntake.set(0);
         }
 
-        if (joystick1.getRightBumper() && !launching)
+        if (joystick1.getBumper(Hand.kRight) && !launching)
         {
             double percent = 0.75;
             if (manualLaunch != -1)
@@ -115,15 +115,15 @@ public class Transport
             launcher1.set(ControlMode.PercentOutput, -percent);
             launcher2.set(ControlMode.PercentOutput, percent);
         }
-        if (joystick1.getRightBumperReleased() && !launching)
+        if (joystick1.getBumperReleased(Hand.kRight) && !launching)
         {
             launcher1.set(ControlMode.PercentOutput, 0);
             launcher2.set(ControlMode.PercentOutput, 0);
         }
 
-        if (Math.abs(joystick2.getRightY()) > 0.1)
+        if (Math.abs(joystick2.getY(Hand.kRight)) > 0.1)
         {
-            angledBelts.set(joystick2.getRightY());
+            angledBelts.set(joystick2.getY(Hand.kRight));
             state = State.threeBall;
         }
         else if (state == State.threeBall)
@@ -131,9 +131,9 @@ public class Transport
             angledBelts.set(0);
         }
 
-        if (Math.abs(joystick2.getLeftY()) > 0.1)
+        if (Math.abs(joystick2.getY(Hand.kLeft)) > 0.1)
         {
-            verticalBelts.set(joystick2.getLeftY());
+            verticalBelts.set(joystick2.getY(Hand.kLeft));
             state = State.threeBall;
         }
         else if (state == State.threeBall)
